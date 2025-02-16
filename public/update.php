@@ -8,26 +8,16 @@ $contact = $query->fetch(PDO::FETCH_ASSOC);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = trim($_POST["name"]);
-    $email = trim($_POST["email"]);
+    $lastName = trim($_POST["lastName"]);
     $phone = trim($_POST["phone"]);
 
-    // Check if the email already exists in another record
-    $checkStmt = $conn->prepare("SELECT COUNT(*) FROM contacts WHERE email = ? AND id != ?");
-    $checkStmt->execute([$email, $id]);
-    $emailExists = $checkStmt->fetchColumn();
-
-    if ($emailExists > 0) {
-        // Show error message if email is already used by another contact
-        $error = "This email is already registered with another contact!";
+    // Proceed with the update
+    $stmt = $conn->prepare("UPDATE contacts SET name=?, lastName=?, phone=? WHERE id=?");
+    if ($stmt->execute([$name, $lastName, $phone, $id])) {
+        header("Location: index.php?success=Contact updated successfully!");
+        exit();
     } else {
-        // Proceed with the update
-        $stmt = $conn->prepare("UPDATE contacts SET name=?, email=?, phone=? WHERE id=?");
-        if ($stmt->execute([$name, $email, $phone, $id])) {
-            header("Location: index.php?success=Contact updated successfully!");
-            exit();
-        } else {
-            $error = "Error updating contact. Please try again.";
-        }
+        $error = "Error updating contact. Please try again.";
     }
 }
 ?>
@@ -51,12 +41,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="card shadow p-4">
         <form method="POST">
             <div class="mb-3">
-                <label class="form-label">Name</label>
+                <label class="form-label">First Name</label>
                 <input type="text" name="name" value="<?= htmlspecialchars($contact['name']) ?>" class="form-control" required>
             </div>
             <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input type="email" name="email" value="<?= htmlspecialchars($contact['email']) ?>" class="form-control" required>
+                <label class="form-label">Last Name</label>
+                <input type="text" name="lastName" value="<?= htmlspecialchars($contact['lastName']) ?>" class="form-control" required>
             </div>
             <div class="mb-3">
                 <label class="form-label">Phone</label>

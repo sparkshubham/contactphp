@@ -3,21 +3,21 @@ include "../config/database.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = trim($_POST["name"]);
-    $email = trim($_POST["email"]);
+    $lastName = trim($_POST["lastName"]);
     $phone = trim($_POST["phone"]);
 
-    // Check if email already exists
-    $checkStmt = $conn->prepare("SELECT COUNT(*) FROM contacts WHERE email = ?");
-    $checkStmt->execute([$email]);
-    $emailExists = $checkStmt->fetchColumn();
+    // Check if contact already exists (same name, lastName, and phone)
+    $checkStmt = $conn->prepare("SELECT COUNT(*) FROM contacts WHERE name = ? AND lastName = ? AND phone = ?");
+    $checkStmt->execute([$name, $lastName, $phone]);
+    $contactExists = $checkStmt->fetchColumn();
 
-    if ($emailExists > 0) {
-        // Show error message if email is already in use
-        $error = "This email is already registered!";
+    if ($contactExists > 0) {
+        // Show error message if contact already exists
+        $error = "This contact already exists!";
     } else {
         // Insert the new contact
-        $stmt = $conn->prepare("INSERT INTO contacts (name, email, phone) VALUES (?, ?, ?)");
-        if ($stmt->execute([$name, $email, $phone])) {
+        $stmt = $conn->prepare("INSERT INTO contacts (name, lastName, phone) VALUES (?, ?, ?)");
+        if ($stmt->execute([$name, $lastName, $phone])) {
             header("Location: index.php?success=Contact added successfully!");
             exit();
         } else {
@@ -46,12 +46,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="card shadow p-4">
         <form method="POST">
             <div class="mb-3">
-                <label class="form-label">Name</label>
+                <label class="form-label">First Name</label>
                 <input type="text" name="name" class="form-control" required>
             </div>
             <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input type="email" name="email" class="form-control" required>
+                <label class="form-label">Last Name</label>
+                <input type="text" name="lastName" class="form-control" required>
             </div>
             <div class="mb-3">
                 <label class="form-label">Phone</label>

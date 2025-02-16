@@ -26,8 +26,8 @@ $contacts = $query->fetchAll(PDO::FETCH_ASSOC);
             <thead class="table-dark">
                 <tr>
                     <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
                     <th>Phone</th>
                     <th>Actions</th>
                 </tr>
@@ -37,7 +37,7 @@ $contacts = $query->fetchAll(PDO::FETCH_ASSOC);
                 <tr>
                     <td><?= htmlspecialchars($contact['id']) ?></td>
                     <td><?= htmlspecialchars($contact['name']) ?></td>
-                    <td><?= htmlspecialchars($contact['email']) ?></td>
+                    <td><?= htmlspecialchars($contact['lastName']) ?></td>
                     <td><?= htmlspecialchars($contact['phone']) ?></td>
                     <td>
                         <a href="update.php?id=<?= $contact['id'] ?>" class="btn btn-warning btn-sm">✏️ Edit</a>

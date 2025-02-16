@@ -13,17 +13,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES['xml_file'])) {
 
         foreach ($xml->contact as $contact) {
             $name = trim($contact->name);
-            $email = trim($contact->email);
+            $lastName = trim($contact->lastName);
             $phone = trim($contact->phone);
 
-            // Check if the email already exists
-            $checkStmt = $conn->prepare("SELECT COUNT(*) FROM contacts WHERE email = ?");
-            $checkStmt->execute([$email]);
-            $emailExists = $checkStmt->fetchColumn();
+            // Check if the contact already exists based on name and phone
+            $checkStmt = $conn->prepare("SELECT COUNT(*) FROM contacts WHERE name = ? AND phone = ?");
+            $checkStmt->execute([$name, $phone]);
+            $contactExists = $checkStmt->fetchColumn();
 
-            if ($emailExists == 0) {
-                $stmt = $conn->prepare("INSERT INTO contacts (name, email, phone) VALUES (?, ?, ?)");
-                if ($stmt->execute([$name, $email, $phone])) {
+            if ($contactExists == 0) {
+                $stmt = $conn->prepare("INSERT INTO contacts (name, lastName, phone) VALUES (?, ?, ?)");
+                if ($stmt->execute([$name, $lastName, $phone])) {
                     $importedCount++;
                 }
             } else {
